@@ -565,14 +565,16 @@ hrp.CFrame = hrp.CFrame + Vector3.new(0,450,0)
 end
 end)
 fallBtn.MouseButton1Click:Connect(function()
-local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-if hrp then
-local part = findSkyPart()
-if part then storedPart = part:Clon();
-part:Destroy() end  
-hrp.CFrame = hrp.CFrame - Vector3.new(0,6,0)  
-end  
-end)  
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        local part = findSkyPart()
+        if part then
+            storedPart = part:Clone()
+            part:Destroy()
+        end
+        hrp.CFrame = hrp.CFrame - Vector3.new(0,6,0)
+    end
+end)
 UserInputService.InputBegan:Connect(function(input, gp)  
 if not gp then  
 if input.KeyCode == Enum.KeyCode.Q then tpBtn:Activate()  
