@@ -368,54 +368,60 @@ hrp.Velocity = hum.MoveDirection * speed + Vector3.new(0, hrp.Velocity.Y, 0)
 end
 end
 end)
--- Jump Boost Toggle + Input
+-- Jump Boost Toggle + Input (moved to bottom of Main tab)
 local jumpBoostEnabled, jumpPowerValue = false, 100
-local jumpBtn = createButton("Toggle Jump Boost", 90, mainSec)
+
+local jumpBtn = createButton("Toggle Jump Boost", 190, mainSec)
 jumpBtn.MouseButton1Click:Connect(function()
-jumpBoostEnabled = not jumpBoostEnabled
-jumpBtn.Text = jumpBoostEnabled and "✓ Jump Boost ON" or "Toggle Jump Boost"
+    jumpBoostEnabled = not jumpBoostEnabled
+    jumpBtn.Text = jumpBoostEnabled and "✓ Jump Boost ON" or "Toggle Jump Boost"
 end)
+
 local jumpInput = Instance.new("TextBox", mainSec)
-jumpInput.Size = UDim2.new(1,-30,0,30)
-jumpInput.Position = UDim2.new(0,15,0,130)
+jumpInput.Size = UDim2.new(1, -30, 0, 30)
+jumpInput.Position = UDim2.new(0, 15, 0, 230)
 jumpInput.PlaceholderText = "Jump Power (1–138)"
 jumpInput.Text = tostring(jumpPowerValue)
 jumpInput.Font = Enum.Font.Gotham
 jumpInput.TextSize = 14
-jumpInput.TextColor3 = Color3.new(1,1,1)
-jumpInput.BackgroundColor3 = Color3.fromRGB(35,35,35)
-Instance.new("UICorner", jumpInput).CornerRadius = UDim.new(0,6)
+jumpInput.TextColor3 = Color3.new(1, 1, 1)
+jumpInput.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Instance.new("UICorner", jumpInput).CornerRadius = UDim.new(0, 6)
+
 jumpInput.FocusLost:Connect(function()
-local v = tonumber(jumpInput.Text)
-if v and v >= 1 and v <= 138 then
-jumpPowerValue = v
-else
-jumpInput.Text = tostring(jumpPowerValue)
-end
+    local v = tonumber(jumpInput.Text)
+    if v and v >= 1 and v <= 138 then
+        jumpPowerValue = v
+    else
+        jumpInput.Text = tostring(jumpPowerValue)
+    end
 end)
+
 -- Jump Boost Logic
 local function applyJumpBoost(character)
-local hrp = character:WaitForChild("HumanoidRootPart")
-local humanoid = character:WaitForChild("Humanoid")
-local canBoost = true
-humanoid.StateChanged:Connect(function(_, newState)
-if jumpBoostEnabled and newState == Enum.HumanoidStateType.Jumping and canBoost then
-canBoost = false
-local bodyVel = Instance.new("BodyVelocity")
-bodyVel.MaxForce = Vector3.new(0, math.huge, 0)
-bodyVel.Velocity = Vector3.new(0, jumpPowerValue, 0)
-bodyVel.Parent = hrp
-task.delay(0.15, function()
-if bodyVel and bodyVel.Parent then
-bodyVel:Destroy()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+    local humanoid = character:WaitForChild("Humanoid")
+    local canBoost = true
+
+    humanoid.StateChanged:Connect(function(_, newState)
+        if jumpBoostEnabled and newState == Enum.HumanoidStateType.Jumping and canBoost then
+            canBoost = false
+            local bodyVel = Instance.new("BodyVelocity")
+            bodyVel.MaxForce = Vector3.new(0, math.huge, 0)
+            bodyVel.Velocity = Vector3.new(0, jumpPowerValue, 0)
+            bodyVel.Parent = hrp
+            task.delay(0.15, function()
+                if bodyVel and bodyVel.Parent then
+                    bodyVel:Destroy()
+                end
+            end)
+            task.delay(0.7, function()
+                canBoost = true
+            end)
+        end
+    end)
 end
-end)
-task.delay(0.7, function()
-canBoost = true
-end)
-end
-end)
-end
+
 if LocalPlayer.Character then applyJumpBoost(LocalPlayer.Character) end
 LocalPlayer.CharacterAdded:Connect(applyJumpBoost)
 -- Timer ESP
